@@ -11,7 +11,7 @@ Despite it's elegent description, it contains a many diverse unfoldings. Dependi
 
 To play around with this, use the interactive visualization in `ts_interactive/logistic.py`
 
-To launch the Bokeh serve do the following:
+To launch the Bokeh server do the following:
 1) setup a virtual enviroment `python -m venv logistic`
 2) activate the virtual environment using `source logistic/bin/activate`
 3) install the dependencies `pip install -r requirements.txt`
