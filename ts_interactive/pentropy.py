@@ -46,8 +46,8 @@ class PermutationEntropy:
         probabilities = [count / total_patterns for count in pattern_counts.values()]
 
         # Compute the entropy (Shannon entropy)
-        indiv_contributions = [-p* math.log(p) for p in probabilities if p > 0]
-        entropy = sum(indiv_contributions)
+        indiv_contributions = [-p* math.log(p, 2) for p in probabilities if p > 0]
+        entropy = sum(indiv_contributions)/math.log(len(self.ordinals), 2)
         return entropy
 
 if __name__ == "__main__":
