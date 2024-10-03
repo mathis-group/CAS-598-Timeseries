@@ -5,7 +5,7 @@ Interactive Visualization of Classic Complex Timeseries
 
 The logistic map is a classic example of determinstic chaos. You can find out more about the map, on [Wikipedia](https://en.wikipedia.org/wiki/Logistic_map)
 
-The map is an iterative dynamical system, that has the following update rule: $x_{i+1} = r x_{i} *(1-x_{i})$, where its common to only apply this to $ x \in (0,1)$
+The map is an iterative dynamical system, that has the following update rule: $x_{i+1} = r x_{i} *(1-x_{i})$, where its common to only apply this to $x \in (0,1)$
 
 Despite it's elegent description, it contains a many diverse unfoldings. Depending on the value of $r$, successive iterations of this map can lead to fix points, limit cycles, and chaotic timeseries.
 
