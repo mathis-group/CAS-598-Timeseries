@@ -2,7 +2,6 @@ import numpy as np
 from itertools import permutations
 from collections import Counter
 import math
-from lorenz import lorenz_ts
 
 class PermutationEntropy:
     def __init__(self, timeseries, K):
@@ -15,6 +14,7 @@ class PermutationEntropy:
         self.timeseries = timeseries
         self.K = K
         self.n = len(timeseries)
+        self.ordinals = list(permutations(range(K)))
         self.patterns = self._get_patterns()  #  orderings of K elements
         self.pe = self.compute_entropy()
 
@@ -27,6 +27,12 @@ class PermutationEntropy:
             pattern = tuple(np.argsort(subseq))
             patterns.append(pattern)
         pattern_counts = Counter(patterns)
+        # Force all patterns to occur in counter, even if they're missing in the timseries (dumb for large K)
+        found_patterns = set(pattern_counts.keys())
+        missing_patterns = [o for o in self.ordinals if o not in found_patterns]
+        for m in missing_patterns:
+            pattern_counts[m] = 0
+
         return pattern_counts  # Return a dictionary of pattern frequencies
 
 
@@ -40,10 +46,13 @@ class PermutationEntropy:
         probabilities = [count / total_patterns for count in pattern_counts.values()]
 
         # Compute the entropy (Shannon entropy)
-        entropy = -sum(p * math.log(p) for p in probabilities)
+        indiv_contributions = [-p* math.log(p) for p in probabilities if p > 0]
+        entropy = sum(indiv_contributions)
         return entropy
 
 if __name__ == "__main__":
+    from lorenz import lorenz_ts
+
     # Example usage:
     timeseries, _, _, t = lorenz_ts([1.0, 1.0, 1.0], 50, 10000) # np.random.rand(100)  
     random_ts = np.random.choice(timeseries, len(timeseries), replace=False) # Random time series for testing

@@ -1,9 +1,8 @@
 import numpy as np
 from scipy.integrate import odeint
-from bokeh.plotting import figure, show, output_file
-from bokeh.layouts import gridplot
-from bokeh.io import output_notebook
-
+from bokeh.plotting import figure, show, curdoc
+from bokeh.layouts import gridplot, layout
+from bokeh.models import ColumnDataSource, HoverTool, Range1d
 
 # Lorenz system parameters
 sigma = 10.0
@@ -32,26 +31,43 @@ def lorenz_ts(initial_state, tmax, data_points):
 
 
 
-if __name__ == "__main__":
+#if __name__ == "__main__":
 
-    # Initial state (x0, y0, z0)
-    initial_state = [1.0, 1.0, 1.0]
+# Initial state (x0, y0, z0)
+initial_state = [1.0, 1.0, 1.0]
+TOOLS = "box_select,lasso_select,help"
+x,y,z,t = lorenz_ts(initial_state, 30, 5000)
+source = ColumnDataSource(data={
+    'x': x,
+    'y': y,
+    'z': z,
+    't': t
+})
+# Plotting the Lorenz attractor
+# Create Bokeh figures
+BASE_SIZE = 200
+SCATTER_SIZE = 1
+t1 = figure(title="X(t)", tools=TOOLS, background_fill_color="#fafafa",  width=3*BASE_SIZE, height=BASE_SIZE)
+t1.scatter(x='t', y='x', source=source, size=SCATTER_SIZE)#, line_width=1, alpha=0.7)
 
-    x,y,z,t = lorenz_ts(initial_state, 50, 10000)
-    # Plotting the Lorenz attractor
-    # Create Bokeh figures
-    # output_notebook()
-    p1 = figure(title="Lorenz Attractor: X-Y Plane", width=400, height=400)
-    p1.line(x, y, line_width=2, alpha=0.7)
+t2 = figure(title="Y(t)", tools=TOOLS, background_fill_color="#fafafa", width=3*BASE_SIZE, height=BASE_SIZE)
+t2.scatter(x='t', y='y', source=source, size=SCATTER_SIZE)#, line_width=1, alpha=0.7)
 
-    p2 = figure(title="Lorenz Attractor: X-Z Plane", width=400, height=400)
-    p2.line(x, z, line_width=2, alpha=0.7)
+t3 = figure(title="Z(t)", tools=TOOLS, background_fill_color="#fafafa", width=3*BASE_SIZE, height=BASE_SIZE)
+t3.scatter(x='t', y='z', source=source, size=SCATTER_SIZE)#, line_width=1, alpha=0.7)
 
-    p3 = figure(title="Lorenz Attractor: Y-Z Plane", width=400, height=400)
-    p3.line(y, z, line_width=2, alpha=0.7)
+p1 = figure(title="X-Y Plane", tools=TOOLS, background_fill_color="#fafafa",  width=BASE_SIZE, height=BASE_SIZE)
+p1.scatter(x='x', y='y', source=source, size=SCATTER_SIZE)#, line_width=1, alpha=0.7)
 
-    # Create a grid layout
-    grid = gridplot([[p1, p2, p3]])
+p2 = figure(title="X-Z Plane", tools=TOOLS, background_fill_color="#fafafa", width=BASE_SIZE, height=BASE_SIZE)
+p2.scatter(x='x', y='z', source=source, size=SCATTER_SIZE)#, line_width=1, alpha=0.7)
 
-    # Show the result
-    show(grid)
+p3 = figure(title="Y-Z Plane", tools=TOOLS, background_fill_color="#fafafa", width=BASE_SIZE, height=BASE_SIZE)
+p3.scatter(x='y', y='z', source=source, size=SCATTER_SIZE)#, line_width=1, alpha=0.7)
+
+# Create a grid layout
+grid = layout([[p1, p2, p3],
+                 [t1],[t2],[t3]])
+
+# Add the layout to the current document (Bokeh server)
+curdoc().add_root(grid)
